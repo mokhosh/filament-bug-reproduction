@@ -7,6 +7,9 @@ use App\Filament\Resources\UserResource\RelationManagers;
 use App\Models\User;
 use Filament\Forms;
 use Filament\Forms\Form;
+use Filament\Infolists\Infolist;
+use Filament\Infolists;
+use Filament\Infolists\Components\Entry;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
@@ -41,7 +44,7 @@ class UserResource extends Resource
                 //
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
+                Tables\Actions\ViewAction::make(),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
@@ -49,6 +52,17 @@ class UserResource extends Resource
                 ]),
             ]);
     }
+
+    public static function infolist(Infolist $infolist): Infolist
+        {
+            return $infolist
+                ->schema([
+                    Infolists\Components\TextEntry::make('created_at')
+                        ->formatStateUsing(function (Entry $entry) {
+                            return $entry->getState();
+                        }),
+                ]);
+        }
 
     public static function getRelations(): array
     {
@@ -62,7 +76,6 @@ class UserResource extends Resource
         return [
             'index' => Pages\ListUsers::route('/'),
             'create' => Pages\CreateUser::route('/create'),
-            'edit' => Pages\EditUser::route('/{record}/edit'),
         ];
     }
 }
